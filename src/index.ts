@@ -23,6 +23,9 @@ import {
 } from 'three';
 import Camera from './Camera';
 import Renderer from "./Renderer";
+import Ground from "./Ground";
+import Light from "./SpotLight";
+import Character from "./Character";
 //
 // let character;
 // let mixer;
@@ -148,6 +151,8 @@ class Application {
     private readonly spotLight;
     private readonly controls;
     private readonly raycaster;
+    private readonly ground;
+    private readonly character;
 
     constructor() {
         this.scene = new Scene();
@@ -155,19 +160,14 @@ class Application {
         this.clock = new Clock();
         this.renderer = new Renderer();
         this.ambientLight = new AmbientLight(0xffffff, 0.1);
-        this.spotLight = new SpotLight(0xffffff, 0.5);
+        this.spotLight = new Light();
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.raycaster = new Raycaster();
+        this.ground = new Ground();
+        this.character = new Character();
 
         this.renderer.setAnimationLoop(this.animation.bind(this));
-        this.setLight();
         this.addObjectsToScene();
-        this.createGround();
-    }
-
-    private setLight() {
-        this.spotLight.position.set(10, 10, 10);
-        this.spotLight.castShadow = true;
     }
 
     private animation(time) {
@@ -175,27 +175,11 @@ class Application {
     }
 
     private addObjectsToScene() {
+        this.scene.add(this.ground.mesh);
         this.scene.add(this.ambientLight);
         this.scene.add(this.spotLight);
         this.scene.add(new AxesHelper());
-    }
-
-    private createGround() {
-        const texture = new TextureLoader().load('src/assets/textures/grass.jpg');
-        texture.wrapS = RepeatWrapping;
-        texture.wrapT = RepeatWrapping;
-        texture.repeat.set(10, 10);
-        const groundPlaneGeometry = new PlaneGeometry(100, 100);
-        const groundPlaneMaterial = new MeshStandardMaterial({
-            color: 0xffffff,
-            metalness: 0,
-            roughness: 0,
-            map: texture
-        });
-        const mesh = new Mesh(groundPlaneGeometry, groundPlaneMaterial);
-        mesh.rotateX(-Math.PI / 2);
-        mesh.receiveShadow = true;
-        this.scene.add(mesh);
+        this.character.loadModel(this.scene);
     }
 }
 

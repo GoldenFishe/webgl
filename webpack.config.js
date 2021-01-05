@@ -7,10 +7,17 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.(png|jpe?g|gif|gltf|bin)$/i,
+                loader: 'file-loader',
+                options: {
+                    outputPath: 'assets',
+                },
+            },
+            {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
-                exclude: /node_modules/,
-            },
+                exclude: /node_modules/
+            }
         ],
     },
     resolve: {
@@ -18,7 +25,7 @@ module.exports = {
     },
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'docs'),
     },
     plugins: [
         new HtmlWebpackPlugin({template: "./src/public/index.html"})
